@@ -1,0 +1,230 @@
+:root {
+  color-scheme: light;
+  --color-bg: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-primary: #3182f6;
+  --color-text: #1a1d29;
+  --color-muted: #6b7280;
+  --color-border: #d7dbe6;
+  --color-border-strong: #1a1d29;
+  --color-given: #eef1f7;
+  --color-conflict-bg: #ffe3e3;
+  --color-conflict-text: #d92626;
+  --color-selected: #dceafe;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard',
+    'Malgun Gothic', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  padding: calc(env(safe-area-inset-top, 0px) + 56px) 16px calc(env(safe-area-inset-bottom, 0px) + 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+}
+
+.app-header h1 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.difficulty-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.difficulty-option {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.difficulty-option.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.sudoku-board {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-strong);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.sudoku-row {
+  flex: 1;
+  display: flex;
+}
+
+.sudoku-cell {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1rem, 4.2vw, 1.4rem);
+  font-weight: 600;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-left: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.sudoku-cell:disabled {
+  cursor: default;
+}
+
+.sudoku-cell.given {
+  background: var(--color-given);
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.sudoku-cell.box-shade {
+  background-color: color-mix(in srgb, var(--color-given) 55%, var(--color-surface));
+}
+
+.sudoku-cell.given.box-shade {
+  background-color: var(--color-given);
+}
+
+.sudoku-cell.selected {
+  background: var(--color-selected) !important;
+}
+
+.sudoku-cell.conflict {
+  background: var(--color-conflict-bg) !important;
+  color: var(--color-conflict-text);
+}
+
+.sudoku-cell.border-left-thick {
+  border-left: 2px solid var(--color-border-strong);
+}
+
+.sudoku-cell.border-top-thick {
+  border-top: 2px solid var(--color-border-strong);
+}
+
+.sudoku-cell.border-right-thick {
+  border-right: 2px solid var(--color-border-strong);
+}
+
+.sudoku-cell.border-bottom-thick {
+  border-bottom: 2px solid var(--color-border-strong);
+}
+
+.solved-banner {
+  margin: 0;
+  padding: 10px 16px;
+  background: #e6f4ea;
+  color: #1a7f37;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.jamo-keypad {
+  width: 100%;
+  max-width: 400px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.keypad-key {
+  padding: 14px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.keypad-key:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.keypad-key.keypad-clear {
+  grid-column: span 2;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.new-game-button {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 0;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-bg: #14161f;
+    --color-surface: #1e2130;
+    --color-text: #f2f4fa;
+    --color-muted: #9aa1b4;
+    --color-border: #333750;
+    --color-border-strong: #f2f4fa;
+    --color-given: #2a2e42;
+    --color-conflict-bg: #4a1f24;
+    --color-conflict-text: #ff8080;
+    --color-selected: #2c3f66;
+  }
+}
