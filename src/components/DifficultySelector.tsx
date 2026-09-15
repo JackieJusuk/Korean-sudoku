@@ -9,9 +9,10 @@ const OPTIONS: { value: Difficulty; label: string }[] = [
 interface DifficultySelectorProps {
   value: Difficulty;
   onChange: (difficulty: Difficulty) => void;
+  disabled?: boolean;
 }
 
-export function DifficultySelector({ value, onChange }: DifficultySelectorProps) {
+export function DifficultySelector({ value, onChange, disabled = false }: DifficultySelectorProps) {
   return (
     <div className="difficulty-selector" role="radiogroup" aria-label="난이도 선택">
       {OPTIONS.map((option) => (
@@ -22,6 +23,7 @@ export function DifficultySelector({ value, onChange }: DifficultySelectorProps)
           aria-checked={value === option.value}
           className={`difficulty-option${value === option.value ? ' active' : ''}`}
           onClick={() => onChange(option.value)}
+          disabled={disabled}
         >
           {option.label}
         </button>

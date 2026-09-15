@@ -3,14 +3,20 @@
   --color-bg: #f4f6fb;
   --color-surface: #ffffff;
   --color-primary: #3182f6;
+  --color-primary-soft: #eaf2ff;
   --color-text: #1a1d29;
   --color-muted: #6b7280;
   --color-border: #d7dbe6;
   --color-border-strong: #1a1d29;
   --color-given: #eef1f7;
+  --color-peer: #eef4ff;
+  --color-same-value: #d7e6ff;
   --color-conflict-bg: #ffe3e3;
   --color-conflict-text: #d92626;
-  --color-selected: #dceafe;
+  --color-selected: #bcd7ff;
+  --color-success-bg: #e6f4ea;
+  --color-success-text: #1a7f37;
+  --shadow-card: 0 8px 24px rgba(26, 29, 41, 0.06);
 
   font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard',
     'Malgun Gothic', sans-serif;
@@ -35,7 +41,7 @@ body {
 
 .app {
   min-height: 100vh;
-  padding: calc(env(safe-area-inset-top, 0px) + 56px) 16px calc(env(safe-area-inset-bottom, 0px) + 24px);
+  padding: calc(env(safe-area-inset-top, 0px) + 48px) 16px calc(env(safe-area-inset-bottom, 0px) + 24px);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -46,14 +52,32 @@ body {
 .app-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
   text-align: center;
 }
 
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.brand-mark {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
 .app-header h1 {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .app-main {
@@ -76,6 +100,12 @@ body {
   padding: 6px 16px;
   font-size: 0.875rem;
   cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.difficulty-option:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .difficulty-option.active {
@@ -85,9 +115,56 @@ body {
   font-weight: 600;
 }
 
-.sudoku-board {
+.status-row {
   width: 100%;
   max-width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.new-game-button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.new-game-button:active {
+  transform: scale(0.97);
+}
+
+.new-game-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
+}
+
+.board-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.sudoku-board {
+  width: 100%;
   aspect-ratio: 1 / 1;
   display: flex;
   flex-direction: column;
@@ -95,6 +172,7 @@ body {
   border: 2px solid var(--color-border-strong);
   border-radius: 12px;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .sudoku-row {
@@ -116,6 +194,7 @@ body {
   border-left: none;
   padding: 0;
   cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
 }
 
 .sudoku-cell:disabled {
@@ -136,13 +215,30 @@ body {
   background-color: var(--color-given);
 }
 
+.sudoku-cell.peer {
+  background-color: var(--color-peer);
+}
+
+.sudoku-cell.given.peer {
+  background-color: color-mix(in srgb, var(--color-peer) 60%, var(--color-given));
+}
+
+.sudoku-cell.same-value {
+  background-color: var(--color-same-value);
+  color: var(--color-primary);
+}
+
+.sudoku-cell.given.same-value {
+  background-color: var(--color-same-value);
+}
+
 .sudoku-cell.selected {
   background: var(--color-selected) !important;
 }
 
 .sudoku-cell.conflict {
   background: var(--color-conflict-bg) !important;
-  color: var(--color-conflict-text);
+  color: var(--color-conflict-text) !important;
 }
 
 .sudoku-cell.border-left-thick {
@@ -161,13 +257,49 @@ body {
   border-bottom: 2px solid var(--color-border-strong);
 }
 
-.solved-banner {
-  margin: 0;
-  padding: 10px 16px;
-  background: #e6f4ea;
-  color: #1a7f37;
-  border-radius: 8px;
+.board-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border-radius: 12px;
   font-weight: 600;
+  color: var(--color-text);
+  animation: fade-in 0.15s ease;
+}
+
+.solved-overlay {
+  background: color-mix(in srgb, var(--color-success-bg) 92%, transparent);
+  color: var(--color-success-text);
+  font-size: 1.1rem;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .jamo-keypad {
@@ -187,6 +319,12 @@ body {
   background: var(--color-surface);
   color: var(--color-text);
   cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.keypad-key:active:not(:disabled) {
+  transform: scale(0.95);
+  background: var(--color-primary-soft);
 }
 
 .keypad-key:disabled {
@@ -200,19 +338,6 @@ body {
   color: var(--color-muted);
 }
 
-.new-game-button {
-  width: 100%;
-  max-width: 400px;
-  padding: 12px 0;
-  border-radius: 10px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-primary);
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
@@ -223,8 +348,14 @@ body {
     --color-border: #333750;
     --color-border-strong: #f2f4fa;
     --color-given: #2a2e42;
+    --color-peer: #232a42;
+    --color-same-value: #2c3f66;
     --color-conflict-bg: #4a1f24;
     --color-conflict-text: #ff8080;
-    --color-selected: #2c3f66;
+    --color-selected: #3a5a94;
+    --color-primary-soft: #1c2a45;
+    --color-success-bg: #16301f;
+    --color-success-text: #7ee2a0;
+    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.35);
   }
 }
